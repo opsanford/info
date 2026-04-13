@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8" />
+<title>Test Sensors</title>
+<link rel="stylesheet" type="text/css" href="styles.css" />
+
+</head>
+<body>
+
+<div id="camera" class="section_item" style="text-align: center; align-content: center;">
+	<video id="video" width="50%" height="50%" autoplay muted>
+</div>
+
+<div class="section_item">
+	<h3>Beschleunigung, Kompass</h3>
+	<p id="acc">No accelerometer found.</p>
+	<p id="mag">No magnetometer found.</p>
+</div>
+
+<div id="geoloc">
+	<button onclick="getLocation()">Get location</button>
+	<p id="p_geoloc">Geolocation not available.</p>
+</div>
+
+</body>
+<script>
+var video = document.getElementById("video");
+
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+  .then(stream => video.srcObject = stream)
+  .catch(e => document.getElementById("camera").innerHTML = "<p>Camera unusable!</p>");
+
+const acc = document.getElementById("acc");
+
+window.ondevicemotion = function(event) {
+    var ax = event.accelerationIncludingGravity.x
+    var ay = event.accelerationIncludingGravity.y
+    var az = event.accelerationIncludingGravity.z
+
+    acc.innerHTML = "X = " + ax + "<br>" + "Y = " + ay + "<br>" + "Z = " + az;
+}
+
+const geoloc_output = document.getElementById("p_geoloc");
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+        geoloc_output.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+    geoloc_output.innerHTML = "Latitude: " + position.coords.latitude +
+    "<br>Longitude: " + position.coords.longitude;
+}
+
+function showError(error) {
+    geoloc_output.innerHTML = error + " " + error.code;
+}
+</script>
+</html>
